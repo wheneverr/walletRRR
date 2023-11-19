@@ -36,13 +36,14 @@ module.exports = [
       if (!token) {
         return {
           code: 60204,
-          message: 'Account and password are incorrect.'
+          message: '账号或密码错误！'
         }
       }
 
       return {
         code: 20000,
-        data: token
+        data: token,
+        message: '登录成功！'
       }
     }
   },
@@ -80,5 +81,18 @@ module.exports = [
         data: 'success'
       }
     }
-  }
+  },
+
+  // user register
+  {
+    url: '/vue-admin-template/user/register',
+    type: 'post',
+    response: _ => {
+
+      return {
+        code: 20000,
+        message: '注册成功！'
+      }
+    }
+  },
 ]

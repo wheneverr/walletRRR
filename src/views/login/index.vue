@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">WALLET系统登录</h3>
       </div>
 
       <el-form-item prop="username">
@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -30,7 +30,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -41,11 +41,11 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
+        <span class="tips-register" @click="goToRegister">没有账户，点击注册</span>
+        <span> 用户名: admin</span>
       </div>
 
     </el-form>
@@ -53,14 +53,14 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+//import { validUsername } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (!value.length) {
+        callback(new Error('Please enter user name'))
       } else {
         callback()
       }
@@ -74,8 +74,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -106,12 +106,16 @@ export default {
       })
     },
     handleLogin() {
+      //console.log(this.loginForm)
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.$store.dispatch('user/login', this.loginForm).then(res => {
+            console.log('aaa')
+            console.log(res.message)
+            alert(res.message)
             this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
+            //this.loading = false
           }).catch(() => {
             this.loading = false
           })
@@ -120,6 +124,9 @@ export default {
           return false
         }
       })
+    },
+    goToRegister() {
+      this.$router.push('/register')
     }
   }
 }
@@ -212,6 +219,10 @@ $light_gray:#eee;
     display: inline-block;
   }
 
+  .radio-container {
+    padding: 6px 5px 6px 15px;
+  }
+
   .title-container {
     position: relative;
 
@@ -232,6 +243,12 @@ $light_gray:#eee;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+
+  .tips-register{
+    margin-right: 30px;
+    color: #0272fc;
+    cursor: pointer;
   }
 }
 </style>
