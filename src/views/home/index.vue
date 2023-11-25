@@ -37,10 +37,16 @@
       <el-dialog title="修改信息" :visible.sync="dialogFormVisible">
         <el-form :model="updataUserForm" label-width="120px">
           <el-form-item label="用户名">
+            <el-input v-model="updataUserForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="主卡卡号">
+            <el-input v-model="updataUserForm.mainCardId"></el-input>
+          </el-form-item>
+          <el-form-item label="姓名">
             <el-input v-model="updataUserForm.name"></el-input>
           </el-form-item>
           <el-form-item label="SSN">
-            <el-input v-model="updataUserForm.SSN"></el-input>
+            <el-input v-model="updataUserForm.ssn"></el-input>
           </el-form-item>
           <el-form-item label="电话">
             <el-input v-model="updataUserForm.phone"></el-input>
@@ -51,7 +57,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          <el-button type="primary" @click="handleUpdataForm">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -76,8 +82,11 @@ export default {
         walletBalance: 0,
       },
       updataUserForm:{
+        userId:'',
+        username: '',
+        mainCardId:'',
         name: '',
-        SSN: '',
+        ssn: '',
         phone: '',
         email: '',
       },
@@ -90,15 +99,84 @@ export default {
   methods: {
     load() {
       const storedUserInfo = getUserInfo()
+
+      this.$store.dispatch('user/getInfo', storedUserInfo.userId ).then(res => {
+        if(res.success){
+          this.userInfo.userId = res.data.userId
+          this.userInfo.name = res.data.name
+          this.userInfo.userName = res.data.userName
+          this.userInfo.mainCardId = res.data.mainCardId
+          this.userInfo.ssn = res.data.ssn
+          this.userInfo.phone = res.data.phone
+          this.userInfo.email = res.data.email
+          this.userInfo.walletBalance = res.data.walletBalance
+          this.updataUserForm.userId = res.data.userId
+        }
+      }).catch( error => {
+        console.log(error)
+        //this.$router.push('/404')
+      })
+      
       //console.log(storedUserInfo)
-      this.userInfo.userId = storedUserInfo.userId
-      this.userInfo.name = storedUserInfo.name
-      this.userInfo.userName = storedUserInfo.userName
-      this.userInfo.mainCardId = storedUserInfo.mainCardId
-      this.userInfo.ssn = storedUserInfo.ssn
-      this.userInfo.phone = storedUserInfo.phone
-      this.userInfo.email = storedUserInfo.email
-      this.userInfo.walletBalance = storedUserInfo.walletBalance
+      // this.userInfo.userId = storedUserInfo.userId
+      // this.userInfo.name = storedUserInfo.name
+      // this.userInfo.userName = storedUserInfo.userName
+      // this.userInfo.mainCardId = storedUserInfo.mainCardId
+      // this.userInfo.ssn = storedUserInfo.ssn
+      // this.userInfo.phone = storedUserInfo.phone
+      // this.userInfo.email = storedUserInfo.email
+      // this.userInfo.walletBalance = storedUserInfo.walletBalance
+      // this.updataUserForm.userId = storedUserInfo.userId
+    },
+    validateUpdateForm(){
+      if(this.updataUserForm.username.trim() === ''){
+        return false
+      }
+      if(this.updataUserForm.name.trim() === ''){
+        return false
+      }
+      if(this.updataUserForm.ssn.trim() === ''){
+        return false
+      }
+      if(this.updataUserForm.phone.trim() === ''){
+        return false
+      }
+      if(this.updataUserForm.email.trim() === ''){
+        return false
+      }
+      return true
+    },
+    handleUpdataForm(){
+      if(this.validateUpdateForm()){
+        //console.log('ook!')
+        this.$store.dispatch('user/updateUserInfo', this.updataUserForm).then(res =>{
+          if(res.success){
+              this.$alert(res.message, '提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  location.reload()
+                }
+              })
+            }
+            else{
+              this.$alert(res.message, '提示', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.dialogFormVisible = false
+                this.loading = false
+              }
+            })
+            }
+        })
+      }
+      else{
+        this.$alert('修改不能为空！', '提示', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.loading = false
+              }
+            })
+      }
     },
   },
 };

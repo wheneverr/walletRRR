@@ -1,4 +1,4 @@
-import { login, logout, getInfo, register } from '@/api/user'
+import { login, register, updateUserInfo, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken, setUserInfo } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import user from '@/../mock/user'
@@ -38,9 +38,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ userName: username.trim(), pwd: password }).then(response => {
         const { success, data } = response
-        console.log(data)
-        console.log(response)
+        //console.log(data)
+        //console.log(response)
         if(success){
+          
           commit('SET_TOKEN', data.token)
           commit('SET_USERNAME', data.userName)
           commit('SET_USERID', data.userId)
@@ -55,27 +56,16 @@ const actions = {
     })
   },
 
-  // // get user info
-  // getInfo({ commit, state }) {
-  //   return new Promise((resolve, reject) => {
-  //     getInfo(state.token).then(response => {
-  //       const { data } = response
-
-  //       if (!data) {
-  //         return reject('Verification failed, please Login again.')
-  //       }
-
-  //       const { name, avatar, userId } = data
-
-  //       commit('SET_NAME', name)
-  //       commit('SET_AVATAR', avatar)
-  //       commit('SET_USERID', userId)
-  //       resolve(data)
-  //     }).catch(error => {
-  //       reject(error)
-  //     })
-  //   })
-  // },
+  // get user info
+  getInfo({ commit}, userId ) {
+    return new Promise((resolve, reject) => {
+      getInfo(userId).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
 
   // remove token
   resetToken({ commit }) {
@@ -87,16 +77,28 @@ const actions = {
   },
 
   register({ commit },userRegisterInfo) {
-    const {username, password, ssn, email, phone } = userRegisterInfo
+    const {username, password, ssn, email, phone, name, payPwd } = userRegisterInfo
     return new Promise((resolve, reject) => {
-      register({ username: username.trim(), password: password, ssn: ssn, email: email, phone: phone}).then(response => {
-        const {data} = response
+      register({ userName: username.trim(), pwd: password, ssn: ssn, email: email, phone: phone, name: name, payPwd: payPwd}).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  updateUserInfo({ commit }, updateUserForm) {
+    const {userId, username, name, ssn, email, phone, mainCardId} = updateUserForm
+    console.log(userId)
+    return new Promise((resolve, reject) => {
+      updateUserInfo({ userId: userId, userName: username, name: name, ssn: ssn, phone: phone, email: email, mainCardId: mainCardId}).then(response =>{
         resolve(response)
       }).catch(error => {
         reject(error)
       })
     })
   }
+
 }
 
 export default {

@@ -49,6 +49,18 @@
         </span>
       </el-form-item>
 
+      <div class="item-label">姓名</div>
+      <el-form-item prop="name">
+        <el-input
+          ref="name"
+          v-model="registerForm.name"
+          name="name"
+          type="text"
+          tabindex="4"
+          auto-complete="on"
+        />
+      </el-form-item>
+
       <div class="item-label">SSN</div>
       <el-form-item prop="ssn">
         <el-input
@@ -56,7 +68,7 @@
           v-model="registerForm.ssn"
           name="ssn"
           type="text"
-          tabindex="4"
+          tabindex="5"
           auto-complete="on"
         />
       </el-form-item>
@@ -68,7 +80,7 @@
           v-model="registerForm.email"
           name="email"
           type="text"
-          tabindex="5"
+          tabindex="6"
           auto-complete="on"
         />
       </el-form-item>
@@ -80,9 +92,26 @@
           v-model="registerForm.phone"
           name="phone"
           type="text"
-          tabindex="6"
+          tabindex="7"
           auto-complete="on"
         />
+      </el-form-item>
+
+      <div class="item-label">支付密码</div>
+      <el-form-item prop="payPwd">
+        <el-input
+          ref="payPwd"
+          v-model="registerForm.payPwd"
+          name="payPwd"
+          type="text"
+          tabindex="8"
+          auto-complete="on"
+          :key="payPwdType"
+          :type="payPwdType"
+        />
+        <span class="show-pwd" @click="showPayPwd">
+          <svg-icon :icon-class="payPwdType === 'password' ? 'eye' : 'eye-open'" />
+        </span>
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleRegister">注册</el-button>
@@ -146,9 +175,11 @@ export default {
         username: '',
         password: '',
         confirmpassword: '',
+        name:'',
         ssn: '',
         email: '',
-        phone: ''
+        phone: '',
+        payPwd:''
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -161,6 +192,7 @@ export default {
       loading: false,
       passwordType: 'password',
       confirmPasswordType: 'password',
+      payPwdType: 'password',
       redirect: undefined
     }
   },
@@ -198,14 +230,37 @@ export default {
         this.$refs.confirmpassword.focus()
       })
     },
+    showPayPwd() {
+      if (this.payPwdType === 'password') {
+        this.payPwdType = ''
+      } else {
+        this.payPwdType = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.payPwd.focus()
+      })
+    },
     handleRegister() {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/register', this.registerForm).then(res => {
-            alert(res.message)
-            this.$router.push({ path: this.redirect || '/login' })
-            this.loading = false
+            if(res.success){
+              this.$alert(res.message, '提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  this.$router.push({ path: this.redirect || '/login' })
+                }
+              })
+            }
+            else{
+              this.$alert(res.message, '提示', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.loading = false
+              }
+            })
+            }
           }).catch(() => {
             console.log('err1')
             this.loading = false

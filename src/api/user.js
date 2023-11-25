@@ -2,24 +2,40 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: 'http://116.63.64.208:8700/sysUser/login',
+    url: '/sysUser/login',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+export function getInfo(userId) {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: '/sysUser/getById',
     method: 'get',
-    params: { token }
+    params: { userId }
   })
 }
 
 export function register(data) {
   return request({
-    url: '/vue-admin-template/user/register',
+    url: '/sysUser/add',
     method: 'post',
     data
+  })
+}
+
+export function updateUserInfo(data) {
+  return request({
+    url: '/sysUser/update',
+    method: 'post',
+    data
+  })
+}
+
+export function getUserCardList(userId) {
+  return request({
+    url: '/userCard/listByUser',
+    method: 'get',
+    params: { userId }
   })
 }

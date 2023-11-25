@@ -1,6 +1,11 @@
 <template>
     <div class="app-container">
-      <el-table
+      <el-card>
+        <div slot="header" class="clearfix">
+            <span>交易记录</span>
+        </div>
+        
+        <el-table
         v-loading="listLoading"
         :data="recordList"
         element-loading-text="Loading"
@@ -8,7 +13,7 @@
         fit
         highlight-current-row
       >
-        <el-table-column align="center" label="交易ID" prop="transactionId" width="95">
+        <el-table-column align="center" label="交易ID" prop="transactionId" width="180">
 
         </el-table-column>
 
@@ -18,24 +23,27 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="交易金额" prop="amount" width="180">
+        <el-table-column align="center" label="交易金额" prop="transactionAmount" width="180">
 
         </el-table-column>
 
-        <el-table-column align="center" label="发送用户ID" prop="senderUserId" width="180">
+        <el-table-column align="center" label="发送用户ID" prop="sendUserId" width="180">
 
         </el-table-column>
 
-        <el-table-column align="center" label="接收用户ID" prop="receiverUserId" width="180"></el-table-column>
+        <el-table-column align="center" label="接收用户ID" prop="recUserId" width="180"></el-table-column>
 
-        <el-table-column align="center" label="日期" prop="date" width="180"></el-table-column>
+        <el-table-column align="center" label="创建日期" prop="createTime" width="180" :formatter="formatDate"></el-table-column>
 
+        <el-table-column align="center" label="修改日期" prop="updateTime" width="180" :formatter="formatDate"></el-table-column>
       </el-table>
+    </el-card>
+     
     </div>
   </template>
   
   <script>
-  import { getList } from '@/api/table'
+  import { getTransactionList } from '@/api/transaction'
   
   export default {
     filters: {
@@ -56,121 +64,42 @@
     },
     data() {
       return {
-        recordList: [
-          {
-            transactionId: '10001',
-            transactionType: 0,
-            amount: 500,
-            senderUserId: '001',
-            receiverUserId: '002',
-            date: '2023/8/31',
-          },
-          {
-            transactionId: '10002',
-            transactionType: 1,
-            amount: 100,
-            senderUserId: '002',
-            receiverUserId: '001',
-            date: '2023/8/31',
-          }
-        ],
+        recordList: [],
         listLoading: true
       }
     },
-    created() {
+    mounted() {
       this.fetchData()
     },
     methods: {
       fetchData() {
         this.listLoading = true
-        getList().then(response => {
-          this.list = response.data.items
-          this.listLoading = false
-        })
-      }
-    }
-  }
-  </script>
-  
+        return new Promise((resolve, reject) => {
+          getTransactionList().then(response => {
+            this.recordList = response.data
+            this.listLoading = false
+            resolve(response)
+          }).catch(error =>{
+            console.log(error)
+            reject(error)
+          })
 
-  
-    <!-- <template>
-    <div class="app-container">
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        element-loading-text="Loading"
-        border
-        fit
-        highlight-current-row
-      >
-        <el-table-column align="center" label="ID" width="95">
-          <template slot-scope="scope">
-            {{ scope.$index }}
-          </template>
-        </el-table-column>
-        <el-table-column label="Title">
-          <template slot-scope="scope">
-            {{ scope.row.title }}
-          </template>
-        </el-table-column>
-        <el-table-column label="Author" width="110" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.author }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Pageviews" width="110" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.pageviews }}
-          </template>
-        </el-table-column>
-        <el-table-column class-name="status-col" label="Status" width="110" align="center">
-          <template slot-scope="scope">
-            <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-          <template slot-scope="scope">
-            <i class="el-icon-time" />
-            <span>{{ scope.row.display_time }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-  </template>
-  
-  <script>
-  import { getList } from '@/api/table'
-  
-  export default {
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          published: 'success',
-          draft: 'gray',
-          deleted: 'danger'
-        }
-        return statusMap[status]
-      }
-    },
-    data() {
-      return {
-        list: null,
-        listLoading: true
-      }
-    },
-    created() {
-      this.fetchData()
-    },
-    methods: {
-      fetchData() {
-        this.listLoading = true
-        getList().then(response => {
-          this.list = response.data.items
-          this.listLoading = false
         })
-      }
+      },
+      formatDate(row, column, cellValue) {
+        // cellValue 是该列的值，这里假设它是 ISO 8601 格式的日期字符串
+        const date = new Date(cellValue);
+
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+
+        // 返回格式化后的字符串
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      },
     }
   }
   </script>
-   -->
