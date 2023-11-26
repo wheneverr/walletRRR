@@ -47,3 +47,19 @@ export function audit(pwd, auditStatus, transactionID){
     params: {pwd, auditStatus, transactionID}
   })
 }
+
+export function totalAmount(userId, start, end){
+  return request({
+    url:'/transactionRecord/totalAmount',
+    method: 'get',
+    params:{userId, start, end}
+  })
+}
+
+export function searchTransactionRecord(phone, email, ssn, transactionType, start, end){
+  return request({
+    url:'/transactionRecord/listBy',
+    method: 'get',
+    params:{phone, email, ssn, transactionType, start, end}
+  })
+}
