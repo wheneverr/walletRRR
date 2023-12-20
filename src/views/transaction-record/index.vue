@@ -82,6 +82,11 @@
         <el-table-column align="center" label="交易金额" prop="transactionAmount" width="180">
 
         </el-table-column>
+        <el-table-column align="center" label="交易状态" width="180">
+          <template slot-scope="scope">
+            {{ auditStatusList[scope.row.auditStatus] }}
+          </template>
+</el-table-column>
 
         <el-table-column align="center" label="发送用户ID" prop="sendUserId" width="180">
 
@@ -132,9 +137,14 @@
           ssn:'',
           transactionType:'',
           start:'',
-          end:''
+          end:'',
         },
         storedUserInfo: storedUserInfo,
+        auditStatusList:[
+          "待审核",
+          "已同意",
+          "已拒绝"
+        ],
       }
     },
     mounted() {
@@ -178,6 +188,26 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}T00:00:00`;
       },
+      convertUTCToChinaTime(utcDateString) {
+        // 创建一个 UTC 时间对象
+        const utcDate = new Date(utcDateString);
+
+        // 转换为中国时间
+        const chinaTime = new Date(utcDate.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+
+        // 获取中国时间的年、月、日、时、分、秒
+        const year = chinaTime.getFullYear();
+        const month = (chinaTime.getMonth() + 1).toString().padStart(2, '0');
+        const day = chinaTime.getDate().toString().padStart(2, '0');
+        const hours = chinaTime.getHours().toString().padStart(2, '0');
+        const minutes = chinaTime.getMinutes().toString().padStart(2, '0');
+        const seconds = chinaTime.getSeconds().toString().padStart(2, '0');
+
+        // 构建中国时间的格式
+        const chinaTimeFormatted = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+        return chinaTimeFormatted;
+      },
       getIncomeExpense(){
         // 获取当前日期
         const currentDate = new Date();
@@ -217,8 +247,10 @@
       },
       search(){
         if(this.validateSearchForm()){
+          const startTime = this.convertUTCToChinaTime(this.sendInfoForm.start)
+          const endTime = this.convertUTCToChinaTime(this.sendInfoForm.end)
           return new Promise((resolve, reject) => {
-            searchTransactionRecord(this.sendInfoForm.phone, this.sendInfoForm.email, this.sendInfoForm.ssn, this.sendInfoForm.transactionType, this.sendInfoForm.start, this. sendInfoForm.end).then(response => {
+            searchTransactionRecord(this.sendInfoForm.phone, this.sendInfoForm.email, this.sendInfoForm.ssn, this.sendInfoForm.transactionType, startTime, endTime).then(response => {
               if(response.success){
                             this.$alert(response.message, '提示', {
                                 confirmButtonText: '确定',

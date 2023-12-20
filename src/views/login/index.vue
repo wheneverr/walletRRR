@@ -45,7 +45,6 @@
 
       <div class="tips">
         <span class="tips-register" @click="goToRegister">没有账户，点击注册</span>
-        <span> 用户名: admin</span>
       </div>
 
     </el-form>

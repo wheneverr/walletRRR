@@ -80,7 +80,11 @@
       <el-table-column align="center" label="要钱账户id" prop="recUserId" width="200"></el-table-column>
       <el-table-column align="center" label="金额" prop="transactionAmount" width="95"></el-table-column>
       <el-table-column align="center" label="时间" prop="createTime" width="200" :formatter="formatDate"></el-table-column>
-      <el-table-column align="center" label="状态" prop="auditStatus" width="150"></el-table-column>
+      <el-table-column align="center" label="状态" width="150">
+        <template slot-scope="scope">
+            {{ auditStatusList[scope.row.auditStatus] }}
+          </template>
+      </el-table-column>
     </el-table>
     </el-card>
   </div>
@@ -110,7 +114,12 @@ export default{
               transactionId:'',
               auditStatus:0,
             },
-            dialogFormVisible:false
+            dialogFormVisible:false,
+            auditStatusList:[
+            "待审核",
+            "已同意",
+            "已拒绝"
+          ],
         }
     },
     mounted() {

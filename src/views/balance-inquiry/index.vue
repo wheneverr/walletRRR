@@ -16,7 +16,7 @@
         <el-form :model="innerTracForm" label-width="120px">
             <el-form-item label="银行卡">
                 <el-select v-model="innerTracForm.cardId" placeholder="请选择银行卡">
-                <el-option v-for="(card, index) in cardList" :key="index" :label="typeList[card.cardType] +' '+ card.cardId" :value="card.cardId"></el-option>
+                <el-option v-for="(card, index) in cardList" :key="index" :label="card.cardId" :value="card.cardId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="金额">
@@ -100,11 +100,7 @@
 
         <el-row>
             <el-col :span="5" v-for="(card, index) in cardList" :key="index" >
-            <el-card class="bank-card">
-                <div slot="header" class="bank-card-header">
-                    <!-- 银行名称 -->
-                    {{ typeList[card.cardType] }}
-                </div>
+            <el-card class="bank-card" >
                 <div class="bank-card-content">
                     <el-form >
                         <el-form-item label="卡Id">
@@ -118,6 +114,7 @@
             </el-card>
         </el-col></el-row>
     </el-card>
+    
 </div>
 </template>
 
@@ -125,7 +122,8 @@
 import { getUserInfo } from '@/utils/auth'
 import { getUserCardList } from '@/api/user'
 import { innerTransaction } from '@/api/transaction'
-import { addCard, bindCard, removeCard } from '@/api/card'
+import { addCard, bindCard, removeCard, getCardInfo } from '@/api/card'
+import BankCard from './BankCard.vue'
 
 export default{
     name: 'Balance-inquiry',
@@ -156,6 +154,7 @@ export default{
             walletBalance: 0,
             typeList:typeList,
             cardList: [],
+            cardInfoList:[],
             tracDialogVisible: false,
             tracTypeName: '提现',
             addDialogVisible: false,
@@ -191,7 +190,15 @@ export default{
         Promise.all([
             this.loadUserInfo(),
             this.loadCardInfo()
+        // ]).then(() => {
+        //     this.loadCard();
+        // }).catch(error => {
+        //     console.error(error);
+        // })
         ])
+    },
+    components:{
+        BankCard,
     },
     methods:{
         loadUserInfo() {
@@ -217,7 +224,21 @@ export default{
                 })
             })
         },
-
+        loadCard(){
+            let cardIdList = []
+            for(let card of this.cardList){
+                cardIdList.push(card.cardId)
+            }
+            return new Promise((resolve, reject) => {
+                getCardInfo(cardIdList).then(response => {
+                    this.cardInfoList = response.data
+                    resolve(response)
+                }).catch(error => {
+                    //console.log(error)
+                    reject(error)
+                })
+            })
+        },
         // 检验充值提现表单的合法性
         validateInnerTrac(){
             if(this.innerTracForm.cardId === ''){
@@ -252,16 +273,16 @@ export default{
         },
 
         formatDate(dateTimeString) {
-      const date = new Date(dateTimeString);
-      const year = date.getFullYear();
-      const month = this.padZero(date.getMonth() + 1);
-      const day = this.padZero(date.getDate());
+            const date = new Date(dateTimeString);
+            const year = date.getFullYear();
+            const month = this.padZero(date.getMonth() + 1);
+            const day = this.padZero(date.getDate());
 
-      return `${year}-${month}-${day}`;
-    },
-    padZero(value) {
-      return value < 10 ? `0${value}` : value;
-    },
+            return `${year}-${month}-${day}`;
+            },
+            padZero(value) {
+            return value < 10 ? `0${value}` : value;
+        },
 
         handleCharge(){
             this.tracDialogVisible = true
@@ -439,7 +460,7 @@ export default{
                     })
                 })
             }
-        }
+        },
     }
 }
 </script>

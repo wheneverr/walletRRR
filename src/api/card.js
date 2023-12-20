@@ -23,3 +23,11 @@ export function removeCard(data){
         data
     })
 }
+
+export function getCardInfo(cardIdList){
+    return request({
+        url: '/bankCard/detail',
+        method: 'get',
+        params: {cardId: cardIdList}
+    })
+}
