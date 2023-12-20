@@ -1,7 +1,10 @@
 <<<<<<< HEAD
-# walletRH
-A work of database technology course.
+
+# walletRRR
+
+A work of database technology course
 =======
+
 # wallet
 
 English | [简体中文](./README-zh.md)
@@ -19,7 +22,7 @@ npm install
 npm run dev
 ```
 
-This will automatically open http://localhost:9528
+This will automatically open <http://localhost:9528>
 
 ## Build
 
