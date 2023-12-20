@@ -484,7 +484,7 @@ export default {
 }
 
 .bank-card-content {
-    padding: 12px;
+    padding: 5px;
     /* 调整卡片宽度 */
     max-width: 300px;
     /* 根据需要设置合适的宽度 */
