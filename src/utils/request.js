@@ -7,7 +7,16 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: 'http://116.63.64.208:8700', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 5000, // request timeout
+  // transformResponse: [function (data) {
+  //   // 对 data 进行处理，这里假设 data 是 JSON 对象
+  //   if (typeof data === 'string') {
+  //     // 将 userId 转换为字符串
+  //     const JSONbigString = new JSONbig({ storeAsString: true})
+  //     return JSONbigString.parse(data)
+  //   }
+  //   return data;
+  // }]
 })
 
 // request interceptor

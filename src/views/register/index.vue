@@ -146,15 +146,17 @@ export default {
       }
     }
     const validateEmail = (rule, value, callback) => {
-      if (!value.length) {
-        callback(new Error('Email can not be null'))
+      let ePattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
+      if (!ePattern.test(value)) {
+        callback(new Error('Email error pattern'))
       } else {
         callback()
       }
     }
     const validatePhone = (rule, value, callback) => {
-      if (!value.length) {
-        callback(new Error('Phone can not be null'))
+      let mPattern = /^1[34578]\d{9}$/
+      if (!mPattern.test(value)) {
+        callback(new Error('Phone error pattern'))
       } else {
         callback()
       }
@@ -170,6 +172,15 @@ export default {
         callback()
       }
     }
+
+    const validatePayPwd = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('The password can not be less than 6 digits'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       registerForm: {
         username: '',
@@ -187,7 +198,8 @@ export default {
         ssn: [{ required: true, trigger: 'blur', validator: validateSsn }],
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
-        confirmpassword: [{ required: true, trigger: 'blur', validator: validateConfirmpassword }]
+        confirmpassword: [{ required: true, trigger: 'blur', validator: validateConfirmpassword }],
+        payPwd: [{ required: true, trigger: 'blur', validator: validatePayPwd }],
       },
       loading: false,
       passwordType: 'password',

@@ -102,7 +102,7 @@
             </el-dialog>
 
             <el-row>
-                <el-col :span="5" v-for="(card, index) in cardInfoList" :key="index">
+                <el-col :span="7" v-for="(card, index) in cardInfoList" :key="index">
                     <el-card class="bank-card">
                         <div class="bank-card-header">{{ typeList[card.cardType] }}</div>
                         <div class="bank-card-content">
