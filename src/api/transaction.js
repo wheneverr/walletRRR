@@ -71,3 +71,19 @@ export function getTopUser(sent) {
     params: { sent }
   })
 }
+
+export function getAllExpenseList(userId) {
+  return request({
+    url: '/transactionRecord/getSumAmountByMonth',
+    method: 'get',
+    params: { userId }
+  })
+}
+
+export function getAvgExpenseList(userId) {
+  return request({
+    url: '/transactionRecord/getAvgAmountByMonth',
+    method: 'get',
+    params: { userId }
+  })
+}

@@ -8,11 +8,11 @@ export function addCard(data) {
     })
 }
 
-export function bindCard(userID, cardId) {
+export function bindCard(data) {
     return request({
         url: '/userCard/bindMainCard',
-        method: 'get',
-        params: { userID, cardId }
+        method: 'post',
+        data
     })
 }
 

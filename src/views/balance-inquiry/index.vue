@@ -405,7 +405,7 @@ export default {
                 if (valid) {
                     return new Promise((resolve, reject) => {
                         const cardId = this.removeCardInfoForm.cardId
-                        removeCard({ userId: this.storedUserInfo.userId, cardId: parseInt(cardId) }).then(response => {
+                        removeCard({ userId: this.storedUserInfo.userId, cardId: cardId }).then(response => {
                             if (response.success) {
                                 this.$alert(response.message, '提示', {
                                     confirmButtonText: '确定',
@@ -447,7 +447,7 @@ export default {
                 if (valid) {
                     return new Promise((resolve, reject) => {
                         const { cardId } = this.bindCardInfoForm
-                        bindCard(this.storedUserInfo.userId, parseInt(cardId)).then(response => {
+                        bindCard({userID: this.storedUserInfo.userId, cardId: cardId }).then(response => {
                             if (response.success) {
                                 this.$alert(response.message, '提示', {
                                     confirmButtonText: '确定',

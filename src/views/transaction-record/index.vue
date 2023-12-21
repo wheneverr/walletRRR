@@ -7,10 +7,10 @@
         </div>
 
         <el-form label-position="left" label-width="90px" style="margin: 30px auto; width: 200px;">
-          <el-form-item label="本月支出">
+          <el-form-item label="本月总支出">
             <span>{{ expense }}</span>
           </el-form-item>
-          <el-form-item label="本月收入">
+          <el-form-item label="本月总收入">
             <span>{{ income }}</span>
           </el-form-item>
         </el-form>
@@ -19,15 +19,61 @@
       <el-card>
         <svg-icon icon-class="approve" style="width: 40px; height: 40px;" />
         <el-form label-position="left" label-width="100px" style="margin: 30px auto; width: 200px;">
-          <el-form-item label="最佳转账用户">
+          <el-form-item label="最佳发送用户">
             <span>{{ bestTransferUser }}</span>
           </el-form-item>
-          <el-form-item label="最佳要钱用户">
+          <el-form-item label="最佳接收用户">
             <span>{{ bestAskMoneyUser }}</span>
           </el-form-item>
         </el-form>
       </el-card>
     </div>
+
+    <div class="card-box">
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>每月总收支</span>
+        </div>
+
+        <el-table v-loading="listLoading" :data="allExpenseList" element-loading-text="Loading" border fit
+        highlight-current-row>
+        <el-table-column align="center" label="月份" prop="month" width="180"></el-table-column>
+        <el-table-column align="center" label="总金额" prop="sumAmount" width="180"></el-table-column>
+      </el-table>
+      </el-card>
+
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>每月平均收支</span>
+        </div>
+
+        <el-table v-loading="listLoading" :data="avgExpenseList" element-loading-text="Loading" border fit
+        highlight-current-row>
+        <el-table-column align="center" label="月份" prop="month" width="180"></el-table-column>
+        <el-table-column align="center" label="平均金额" prop="avgAmount" width="180"></el-table-column>
+      </el-table>
+      </el-card>
+
+    </div>
+
+    <el-card>
+        <div slot="header" class="clearfix">
+          <span>月收支查询</span>
+        </div>
+
+        <el-form :model="searchAmountForm" label-position="left" label-width="90px" >
+          <el-form-item label="活动时间">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="searchAmountForm.date1" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="2">-</el-col>
+            <el-col :span="11">
+              <el-time-picker placeholder="选择时间" v-model="searchAmountForm.date2" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </el-form-item>
+        </el-form>
+      </el-card>
+
 
     <el-card>
       <div slot="header" class="clearfix">
@@ -118,7 +164,8 @@
   
 <script>
 import { getUserInfo } from '@/utils/auth'
-import { getTransactionList, totalAmount, searchTransactionRecord, getTopUser } from '@/api/transaction'
+import { getTransactionList, totalAmount, searchTransactionRecord, 
+  getTopUser, getAllExpenseList, getAvgExpenseList } from '@/api/transaction'
 import { getInfo } from '@/api/user'
 
 export default {
@@ -145,6 +192,8 @@ export default {
       listLoading: true,
       income: '',
       expense: '',
+      avgExpenseList: [],
+      allExpenseList: [],
       bestTransferUser: '',
       bestAskMoneyUser: '',
       sendInfoForm: {
@@ -154,6 +203,10 @@ export default {
         transactionType: '',
         start: '',
         end: '',
+      },
+      searchAmountForm:{
+        date1:'',
+        date2:''
       },
       storedUserInfo: storedUserInfo,
       auditStatusList: [
@@ -168,7 +221,9 @@ export default {
       this.fetchData(),
       this.getIncomeExpense(),
       this.getBestAskMoneyUser(),
-      this.getBestTransferUser()
+      this.getBestTransferUser(),
+      this.getAllExpenseList(),
+      this.getAvgExpenseList()
     ]).then(() => {
       this.getUsername(this.bestTransferUser, 0)
       this.getUsername(this.bestAskMoneyUser, 1)
@@ -296,6 +351,34 @@ export default {
 
       })
     },
+    getAllExpenseList() {
+      this.listLoading = true
+      return new Promise((resolve, reject) => {
+        getAllExpenseList(this.storedUserInfo.userId).then(response => {
+          this.allExpenseList = response.data
+          this.listLoading = false
+          resolve(response)
+        }).catch(error => {
+          console.log(error)
+          reject(error)
+        })
+
+      })
+    },
+    getAvgExpenseList() {
+      this.listLoading = true
+      return new Promise((resolve, reject) => {
+        getAvgExpenseList(this.storedUserInfo.userId).then(response => {
+          this.avgExpenseList = response.data
+          this.listLoading = false
+          resolve(response)
+        }).catch(error => {
+          console.log(error)
+          reject(error)
+        })
+
+      })
+    },
     validateSearchForm() {
       if (this.sendInfoForm.phone === '' && this.sendInfoForm.email === '' && this.sendInfoForm.ssn === '') {
         return false
@@ -362,6 +445,6 @@ export default {
 }
 
 .card-box .el-card {
-  width: 50%;
+  width: 49.5%;
 }
 </style>
