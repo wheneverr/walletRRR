@@ -36,10 +36,10 @@
         </div>
 
         <el-table v-loading="listLoading" :data="allExpenseList" element-loading-text="Loading" border fit
-        highlight-current-row>
-        <el-table-column align="center" label="月份" prop="month" width="180"></el-table-column>
-        <el-table-column align="center" label="总金额" prop="sumAmount" width="180"></el-table-column>
-      </el-table>
+          highlight-current-row>
+          <el-table-column align="center" label="月份" prop="month"></el-table-column>
+          <el-table-column align="center" label="总金额" prop="sumAmount"></el-table-column>
+        </el-table>
       </el-card>
 
       <el-card>
@@ -48,38 +48,72 @@
         </div>
 
         <el-table v-loading="listLoading" :data="avgExpenseList" element-loading-text="Loading" border fit
-        highlight-current-row>
-        <el-table-column align="center" label="月份" prop="month" width="180"></el-table-column>
-        <el-table-column align="center" label="平均金额" prop="avgAmount" width="180"></el-table-column>
-      </el-table>
+          highlight-current-row>
+          <el-table-column align="center" label="月份" prop="month"></el-table-column>
+          <el-table-column align="center" label="平均金额" prop="avgAmount"></el-table-column>
+        </el-table>
       </el-card>
 
     </div>
 
-    <el-card>
-        <div slot="header" class="clearfix">
-          <span>月收支查询</span>
-        </div>
+    <div class="card-box">
 
-        <el-form :model="searchAmountForm" label-position="left" label-width="90px" >
-          <el-form-item label="活动时间">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="searchAmountForm.date1" style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-time-picker placeholder="选择时间" v-model="searchAmountForm.date2" style="width: 100%;"></el-time-picker>
-            </el-col>
-          </el-form-item>
-        </el-form>
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>最大金额交易</span>
+        </div>
+        <el-table v-loading="listLoading" :data="maxExpenseList" element-loading-text="Loading" border fit
+          highlight-current-row>
+          <el-table-column align="center" label="月份" prop="month"></el-table-column>
+          <el-table-column align="center" label="最大金额" prop="maxAmount"></el-table-column>
+        </el-table>
       </el-card>
 
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>收支查询</span>
+        </div>
+
+        <el-form :model="searchAmountForm" label-position="right" label-width="90px" :rules="searchAmountRules"
+          ref="searchAmountForm">
+          <el-row>
+            <el-col :span="9">
+              <el-form-item label="开始时间" prop="start">
+                <el-date-picker type="date" placeholder="选择开始日期" v-model="searchAmountForm.start" ref="start"
+                  style="width: 100%;"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <el-form-item label="结束时间" prop="end">
+                <el-date-picker type="date" placeholder="选择结束日期" v-model="searchAmountForm.end" ref="end"
+                  style="width: 100%;"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="1">
+              <el-button class="schbtn" type="primary" @click="searchAmount">查询</el-button>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="9">
+              <el-form-item label="总收入">
+                <span>{{ totalReceivedAmount }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <el-form-item label="总转出">
+                <span>{{ totalSentAmount }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-card>
+    </div>
 
     <el-card>
       <div slot="header" class="clearfix">
         <span>交易记录</span>
       </div>
-      <el-form ref="form" :model="sendInfoForm" label-width="80px">
+      <el-form :model="sendInfoForm" label-width="80px" :rules="sendInfoFormRules" ref="sendInfoForm">
         <el-row>
           <el-col :span="4">
             <el-form-item label="电话">
@@ -97,8 +131,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item label="交易类型">
-              <el-select v-model="sendInfoForm.transactionType" placeholder="选择交易类型">
+            <el-form-item label="交易类型" prop="transactionType">
+              <el-select v-model="sendInfoForm.transactionType" placeholder="选择交易类型" ref="transactionType">
                 <el-option label="转账" value=0></el-option>
                 <el-option label="要钱" value=1></el-option>
               </el-select>
@@ -106,9 +140,9 @@
           </el-col>
 
           <el-col :span="6">
-            <el-form-item label="起止时间">
+            <el-form-item label="起止时间" prop="start">
               <el-col :span="11">
-                <el-date-picker type="date" placeholder="选择开始日期" v-model="sendInfoForm.start"
+                <el-date-picker type="date" placeholder="选择开始日期" v-model="sendInfoForm.start" ref="start"
                   style="width: 100%;"></el-date-picker>
               </el-col>
               <el-col class="line" :span="0.5">--</el-col>
@@ -126,7 +160,7 @@
       </el-form>
       <el-table v-loading="listLoading" :data="recordList" element-loading-text="Loading" border fit
         highlight-current-row>
-        <el-table-column align="center" label="交易ID" prop="transactionId" width="180">
+        <el-table-column align="center" label="交易ID" prop="transactionId">
 
         </el-table-column>
 
@@ -145,17 +179,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="发送用户ID" prop="sendUserId" width="180">
+        <el-table-column align="center" label="发送用户ID" prop="sendUserId">
 
         </el-table-column>
 
-        <el-table-column align="center" label="接收用户ID" prop="recUserId" width="180"></el-table-column>
+        <el-table-column align="center" label="接收用户ID" prop="recUserId"></el-table-column>
 
-        <el-table-column align="center" label="创建日期" prop="createTime" width="180"
-          :formatter="formatDate"></el-table-column>
+        <el-table-column align="center" label="创建日期" prop="createTime" :formatter="formatDate"></el-table-column>
 
-        <el-table-column align="center" label="修改日期" prop="updateTime" width="180"
-          :formatter="formatDate"></el-table-column>
+        <el-table-column align="center" label="修改日期" prop="updateTime" :formatter="formatDate"></el-table-column>
       </el-table>
     </el-card>
 
@@ -164,8 +196,10 @@
   
 <script>
 import { getUserInfo } from '@/utils/auth'
-import { getTransactionList, totalAmount, searchTransactionRecord, 
-  getTopUser, getAllExpenseList, getAvgExpenseList } from '@/api/transaction'
+import {
+  getTransactionList, totalAmount, searchTransactionRecord,
+  getTopUser, getAllExpenseList, getAvgExpenseList, getMaxExpenseList
+} from '@/api/transaction'
 import { getInfo } from '@/api/user'
 
 export default {
@@ -187,6 +221,20 @@ export default {
   },
   data() {
     const storedUserInfo = getUserInfo()
+    const validateTransactionType = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('Please select transaction type'))
+      } else {
+        callback()
+      }
+    }
+    const validateDate = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('Please select date'))
+      } else {
+        callback()
+      }
+    }
     return {
       recordList: [],
       listLoading: true,
@@ -194,8 +242,11 @@ export default {
       expense: '',
       avgExpenseList: [],
       allExpenseList: [],
+      maxExpenseList: [],
       bestTransferUser: '',
       bestAskMoneyUser: '',
+      totalSentAmount: '',
+      totalReceivedAmount: '',
       sendInfoForm: {
         phone: '',
         email: '',
@@ -204,9 +255,9 @@ export default {
         start: '',
         end: '',
       },
-      searchAmountForm:{
-        date1:'',
-        date2:''
+      searchAmountForm: {
+        date1: '',
+        date2: ''
       },
       storedUserInfo: storedUserInfo,
       auditStatusList: [
@@ -214,6 +265,15 @@ export default {
         "已同意",
         "已拒绝"
       ],
+      searchAmountRules: {
+        start: [{ required: true, trigger: 'blur', validator: validateDate }],
+        end: [{ required: true, trigger: 'blur', validator: validateDate }],
+      },
+      sendInfoFormRules: {
+        transactionType: [{ required: true, trigger: 'blur', validator: validateTransactionType }],
+        start: [{ required: true, trigger: 'blur', validator: validateDate }],
+        end: [{ required: true, trigger: 'blur', validator: validateDate }],
+      },
     }
   },
   mounted() {
@@ -223,7 +283,8 @@ export default {
       this.getBestAskMoneyUser(),
       this.getBestTransferUser(),
       this.getAllExpenseList(),
-      this.getAvgExpenseList()
+      this.getAvgExpenseList(),
+      this.getMaxExpenseList(),
     ]).then(() => {
       this.getUsername(this.bestTransferUser, 0)
       this.getUsername(this.bestAskMoneyUser, 1)
@@ -379,6 +440,20 @@ export default {
 
       })
     },
+    getMaxExpenseList() {
+      this.listLoading = true
+      return new Promise((resolve, reject) => {
+        getMaxExpenseList(this.storedUserInfo.userId).then(response => {
+          this.maxExpenseList = response.data
+          this.listLoading = false
+          resolve(response)
+        }).catch(error => {
+          console.log(error)
+          reject(error)
+        })
+
+      })
+    },
     validateSearchForm() {
       if (this.sendInfoForm.phone === '' && this.sendInfoForm.email === '' && this.sendInfoForm.ssn === '') {
         return false
@@ -434,6 +509,34 @@ export default {
         })
       }
     },
+
+    searchAmount() {
+      this.$refs.searchAmountForm.validate((valid) => {
+        if (valid) {
+          const startTime = this.convertUTCToChinaTime(this.searchAmountForm.start)
+          const endTime = this.convertUTCToChinaTime(this.searchAmountForm.end)
+          return new Promise((resolve, reject) => {
+            totalAmount(this.storedUserInfo.userId, startTime, endTime).then(response => {
+              this.totalSentAmount = response.data.totalSentAmount
+              this.totalReceivedAmount = response.data.totalReceivedAmount
+              resolve(response)
+            }).catch(error => {
+              console.log(error)
+              reject(error)
+            })
+
+          })
+        }
+        else {
+          this.$alert('输入不能为空！', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.loading = false
+            }
+          })
+        }
+      })
+    },
   }
 }
 </script>
@@ -446,5 +549,13 @@ export default {
 
 .card-box .el-card {
   width: 49.5%;
+}
+
+.narrow {
+  max-width: 10px;
+}
+
+.schbtn {
+  margin-left: 20px;
 }
 </style>

@@ -87,3 +87,11 @@ export function getAvgExpenseList(userId) {
     params: { userId }
   })
 }
+
+export function getMaxExpenseList(userId) {
+  return request({
+    url: '/transactionRecord/getMaxAmountByMonth',
+    method: 'get',
+    params: { userId }
+  })
+}

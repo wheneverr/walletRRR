@@ -31,12 +31,11 @@
       </div>
       <el-table v-loading="listLoading" :data="receiptList" element-loading-text="Loading" border fit
         highlight-current-row>
-        <el-table-column align="center" label="交易id" prop="transactionId" width="200"></el-table-column>
-        <el-table-column align="center" label="发起账户id" prop="sendUserId" width="200"></el-table-column>
-        <el-table-column align="center" label="金额" prop="transactionAmount" width="95"></el-table-column>
-        <el-table-column align="center" label="时间" prop="createTime" width="200"
-          :formatter="formatDate"></el-table-column>
-        <el-table-column align="center" label="状态" prop="auditStatus" width="150"></el-table-column>
+        <el-table-column align="center" label="交易id" prop="transactionId"></el-table-column>
+        <el-table-column align="center" label="发起账户id" prop="sendUserId"></el-table-column>
+        <el-table-column align="center" label="金额" prop="transactionAmount"></el-table-column>
+        <el-table-column align="center" label="时间" prop="createTime" :formatter="formatDate"></el-table-column>
+        <el-table-column align="center" label="状态" prop="auditStatus"></el-table-column>
         <el-table-column align="center" label="操作" width="170">
           <template slot-scope="scope">
             <div v-if="scope.row.auditStatus == 0" style="display: flex; justify-content: space-between;">
@@ -66,11 +65,10 @@
       </div>
       <el-table v-loading="listLoading" :data="initiationList" element-loading-text="Loading" border fit
         highlight-current-row>
-        <el-table-column align="center" label="交易id" prop="transactionId" width="200"></el-table-column>
-        <el-table-column align="center" label="要钱账户id" prop="recUserId" width="200"></el-table-column>
-        <el-table-column align="center" label="金额" prop="transactionAmount" width="95"></el-table-column>
-        <el-table-column align="center" label="时间" prop="createTime" width="200"
-          :formatter="formatDate"></el-table-column>
+        <el-table-column align="center" label="交易id" prop="transactionId"></el-table-column>
+        <el-table-column align="center" label="要钱账户id" prop="recUserId"></el-table-column>
+        <el-table-column align="center" label="金额" prop="transactionAmount" width="150"></el-table-column>
+        <el-table-column align="center" label="时间" prop="createTime" :formatter="formatDate"></el-table-column>
         <el-table-column align="center" label="状态" width="150">
           <template slot-scope="scope">
             {{ auditStatusList[scope.row.auditStatus] }}
