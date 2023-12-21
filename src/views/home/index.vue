@@ -35,24 +35,24 @@
 
 
       <el-dialog title="修改信息" :visible.sync="dialogFormVisible">
-        <el-form :model="updateUserForm" label-width="120px">
-          <el-form-item label="用户名">
-            <el-input v-model="updateUserForm.username"></el-input>
+        <el-form :model="updateUserForm" :rules="updateRules" label-width="120px" status-icon ref="updateUserForm">
+          <el-form-item label="用户名" prop="username">
+            <el-input ref="username" v-model="updateUserForm.username"></el-input>
           </el-form-item>
           <el-form-item label="主卡卡号">
-            <el-input v-model="updateUserForm.mainCardId" disabled></el-input>
+            <el-input ref="mainCardId" v-model="updateUserForm.mainCardId" disabled></el-input>
           </el-form-item>
-          <el-form-item label="姓名">
-            <el-input v-model="updateUserForm.name"></el-input>
+          <el-form-item label="姓名" prop="name">
+            <el-input ref="name" v-model="updateUserForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="SSN">
-            <el-input v-model="updateUserForm.ssn"></el-input>
+          <el-form-item label="SSN" prop="ssn">
+            <el-input ref="ssn" v-model="updateUserForm.ssn"></el-input>
           </el-form-item>
-          <el-form-item label="电话">
-            <el-input v-model="updateUserForm.phone"></el-input>
+          <el-form-item label="电话" prop="phone">
+            <el-input ref="phone" v-model="updateUserForm.phone"></el-input>
           </el-form-item>
-          <el-form-item label="电子邮箱">
-            <el-input v-model="updateUserForm.email"></el-input>
+          <el-form-item label="电子邮箱" prop="email">
+            <el-input ref="email" v-model="updateUserForm.email"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -70,6 +70,44 @@ import { getUserInfo } from '@/utils/auth'
 export default {
   name: "Home",
   data() {
+    const validateUsername = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('Please enter user name'))
+      } else {
+        callback()
+      }
+    }
+    const validateName = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('Please enter name'))
+      } else {
+        callback()
+      }
+    }
+    const validateSsn = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('SSN can not be null'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      let ePattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
+      if (!ePattern.test(value)) {
+        callback(new Error('Email error pattern'))
+      } else {
+        callback()
+      }
+    }
+    const validatePhone = (rule, value, callback) => {
+      let mPattern = /^1[34578]\d{9}$/
+      if (!mPattern.test(value)) {
+        callback(new Error('Phone error pattern'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       userInfo: {
         userId: '',
@@ -89,6 +127,13 @@ export default {
         ssn: '',
         phone: '',
         email: '',
+      },
+      updateRules: {
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        name: [{ required: true, trigger: 'blur', validator: validateName }],
+        ssn: [{ required: true, trigger: 'blur', validator: validateSsn }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
       },
       dialogFormVisible: false,
     };
@@ -124,55 +169,40 @@ export default {
       })
 
     },
-    validateUpdateForm() {
-      if (this.updateUserForm.username.trim() === '') {
-        return false
-      }
-      if (this.updateUserForm.name.trim() === '') {
-        return false
-      }
-      if (this.updateUserForm.ssn.trim() === '') {
-        return false
-      }
-      if (this.updateUserForm.phone.trim() === '') {
-        return false
-      }
-      if (this.updateUserForm.email.trim() === '') {
-        return false
-      }
-      return true
-    },
     handleUpdataForm() {
-      if (this.validateUpdateForm()) {
-        //console.log('ook!')
-        this.$store.dispatch('user/updateUserInfo', this.updateUserForm).then(res => {
-          if (res.success) {
-            this.$alert(res.message, '提示', {
-              confirmButtonText: '确定',
-              callback: action => {
-                location.reload()
-              }
-            })
-          }
-          else {
-            this.$alert(res.message, '提示', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.dialogFormVisible = false
-                this.loading = false
-              }
-            })
-          }
-        })
-      }
-      else {
-        this.$alert('修改不能为空！', '提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.loading = false
-          }
-        })
-      }
+      this.$refs.updateUserForm.validate((valid) => {
+        if (valid) {
+          //console.log('ook!')
+          this.$store.dispatch('user/updateUserInfo', this.updateUserForm).then(res => {
+            if (res.success) {
+              this.$alert(res.message, '提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  location.reload()
+                }
+              })
+            }
+            else {
+              this.$alert(res.message, '提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  this.dialogFormVisible = false
+                  this.loading = false
+                }
+              })
+            }
+          })
+
+        }
+        else {
+          this.$alert('修改不合理！', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.loading = false
+            }
+          })
+        }
+      })
     },
   },
 };

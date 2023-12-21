@@ -14,9 +14,9 @@ export function innerTransaction(data) {
     method: 'post',
     data
   })
-} 
+}
 
-export function addTransaction(data){
+export function addTransaction(data) {
   return request({
     url: '/transactionRecord/add',
     method: 'post',
@@ -24,42 +24,50 @@ export function addTransaction(data){
   })
 }
 
-export function getReceiptList(userId, transactionType){
+export function getReceiptList(userId, transactionType) {
   return request({
     url: '/transactionRecord/listByRecUser',
     method: 'get',
-    params: {userId, transactionType}
+    params: { userId, transactionType }
   })
 }
 
-export function getInitiationList(userId, transactionType){
+export function getInitiationList(userId, transactionType) {
   return request({
     url: '/transactionRecord/listBySendUser',
     method: 'get',
-    params: {userId, transactionType}
+    params: { userId, transactionType }
   })
 }
 
-export function audit(pwd, auditStatus, transactionID){
+export function audit(pwd, auditStatus, transactionID) {
   return request({
     url: '/transactionRecord/audit',
     method: 'get',
-    params: {pwd, auditStatus, transactionID}
+    params: { pwd, auditStatus, transactionID }
   })
 }
 
-export function totalAmount(userId, start, end){
+export function totalAmount(userId, start, end) {
   return request({
-    url:'/transactionRecord/totalAmount',
+    url: '/transactionRecord/totalAmount',
     method: 'get',
-    params:{userId, start, end}
+    params: { userId, start, end }
   })
 }
 
-export function searchTransactionRecord(phone, email, ssn, transactionType, start, end){
+export function searchTransactionRecord(phone, email, ssn, transactionType, start, end) {
   return request({
-    url:'/transactionRecord/listBy',
+    url: '/transactionRecord/listBy',
     method: 'get',
-    params:{phone, email, ssn, transactionType, start, end}
+    params: { phone, email, ssn, transactionType, start, end }
+  })
+}
+
+export function getTopUser(sent) {
+  return request({
+    url: '/transactionRecord/getTopUser',
+    method: 'get',
+    params: { sent }
   })
 }

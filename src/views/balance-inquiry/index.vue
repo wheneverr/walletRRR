@@ -13,21 +13,21 @@
             </el-form>
 
             <el-dialog :title="tracTypeName" :visible.sync="tracDialogVisible">
-                <el-form :model="innerTracForm" label-width="120px">
-                    <el-form-item label="银行卡">
-                        <el-select v-model="innerTracForm.cardId" placeholder="请选择银行卡">
+                <el-form :model="innerTracForm" label-width="120px" :rules="innerTracRules" ref="innerTracForm">
+                    <el-form-item label="银行卡" prop="cardId">
+                        <el-select ref="cardId" v-model="innerTracForm.cardId" placeholder="请选择银行卡">
                             <el-option v-for="(card, index) in cardList" :key="index" :label="card.cardId"
                                 :value="card.cardId"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="金额">
-                        <el-input v-model="innerTracForm.tracAmount"></el-input>
+                    <el-form-item label="金额" prop="tracAmount">
+                        <el-input ref="tracAmount" v-model="innerTracForm.tracAmount"></el-input>
                     </el-form-item>
-                    <el-form-item label="钱包支付密码">
-                        <el-input v-model="innerTracForm.walletPwd" type="password"></el-input>
+                    <el-form-item label="钱包支付密码" prop="walletPwd">
+                        <el-input ref="walletPwd" v-model="innerTracForm.walletPwd" type="password"></el-input>
                     </el-form-item>
-                    <el-form-item label="卡支付密码">
-                        <el-input v-model="innerTracForm.cardPwd" type="password"></el-input>
+                    <el-form-item label="卡支付密码" prop="cardPwd">
+                        <el-input ref="cardPwd" v-model="innerTracForm.cardPwd" type="password"></el-input>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -45,26 +45,26 @@
             </div>
             <div><el-button style="padding: 12px 50px;" @click="handleAddCard">添加卡</el-button>
                 <el-button style="padding: 12px 50px;" @click="handleRemoveCard">移除卡</el-button>
-                <el-button style="padding: 12px 50px;" @click="handleBindCard">绑定卡</el-button>
+                <el-button style="padding: 12px 50px;" @click="handleBindCard">绑定主卡</el-button>
             </div>
 
             <el-dialog title="添加卡" :visible.sync="addDialogVisible">
-                <el-form :model="addCardInfoForm" label-width="120px">
-                    <el-form-item label="卡号">
-                        <el-input v-model="addCardInfoForm.cardNumber"></el-input>
+                <el-form :model="addCardInfoForm" label-width="120px" :rules="addCardInfoRules" ref="addCardInfoForm">
+                    <el-form-item label="卡号" prop="cardNumber">
+                        <el-input ref="cardNumber" v-model="addCardInfoForm.cardNumber"></el-input>
                     </el-form-item>
-                    <el-form-item label="归属银行">
-                        <el-select v-model="addCardInfoForm.cardType" placeholder="请选择归属银行">
+                    <el-form-item label="归属银行" prop="cardType">
+                        <el-select ref="cardType" v-model="addCardInfoForm.cardType" placeholder="请选择归属银行">
                             <el-option label="中国工商银行" value="0"></el-option>
                             <el-option label="中国建设银行" value="1"></el-option>
                             <el-option label="中国农业银行" value="2"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="金额">
-                        <el-input v-model="addCardInfoForm.balance"></el-input>
+                    <el-form-item label="金额" prop="balance">
+                        <el-input ref="balance" v-model="addCardInfoForm.balance"></el-input>
                     </el-form-item>
-                    <el-form-item label="卡支付密码">
-                        <el-input v-model="addCardInfoForm.pwd" type="password"></el-input>
+                    <el-form-item label="卡支付密码" prop="pwd">
+                        <el-input ref="pwd" v-model="addCardInfoForm.pwd" type="password"></el-input>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -74,10 +74,13 @@
             </el-dialog>
 
 
-            <el-dialog title="绑定卡" :visible.sync="bindDialogVisible">
-                <el-form :model="bindCardInfoForm" label-width="120px">
-                    <el-form-item label="银行卡号">
-                        <el-input v-model="bindCardInfoForm.cardNumber"></el-input>
+            <el-dialog title="绑定主卡" :visible.sync="bindDialogVisible">
+                <el-form :model="bindCardInfoForm" label-width="120px" :rules="bindCardInfoRules" ref="bindCardInfoForm">
+                    <el-form-item label="银行卡" prop="cardId">
+                        <el-select ref="cardId" v-model="bindCardInfoForm.cardId" placeholder="请选择银行卡">
+                            <el-option v-for="(card, index) in cardList" :label="card.cardId"
+                                :value="card.cardId"></el-option>
+                        </el-select>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -87,9 +90,10 @@
             </el-dialog>
 
             <el-dialog title="移除卡" :visible.sync="removeDialogVisible">
-                <el-form :model="removeCardInfoForm" label-width="120px">
-                    <el-form-item label="银行卡">
-                        <el-select v-model="removeCardInfoForm.cardId" placeholder="请选择银行卡">
+                <el-form :model="removeCardInfoForm" label-width="120px" :rules="removeCardInfoRules"
+                    ref="removeCardInfoForm">
+                    <el-form-item label="银行卡" prop="cardId">
+                        <el-select ref="cardId" v-model="removeCardInfoForm.cardId" placeholder="请选择银行卡">
                             <el-option v-for="(card, index) in cardList" :label="card.cardId"
                                 :value="card.cardId"></el-option>
                         </el-select>
@@ -111,7 +115,7 @@
                                     <span>卡id</span><span>{{ card.cardId }}</span>
                                 </li>
                                 <li>
-                                    <span>卡号</span><span>{{ card.cardNumber }}</span>
+                                    <span>卡号</span><span>{{ formatCardNumber(card.cardNumber) }}</span>
                                 </li>
                                 <li>
                                     <span>余额</span><span>{{ card.balance }}</span>
@@ -139,14 +143,44 @@ export default {
     data() {
         const storedUserInfo = getUserInfo()
         const typeList = ["中国工商银行", "中国建设银行", "中国农业银行"]
-        const cardtest = [{
-            cardId: '1',
-            cardNumber: "1000001",
-            cardType: 0,
-            balance: 0,
-            createTime: '2023/8/31'
-        },
-        ]
+        const validateCard = (rule, value, callback) => {
+            if (!value.length) {
+                callback(new Error('Please select card'))
+            } else {
+                callback()
+            }
+        }
+        const validateBank = (rule, value, callback) => {
+            if (!value.length) {
+                callback(new Error('Please select bank'))
+            } else {
+                callback()
+            }
+        }
+        const validateCardNumber = (rule, value, callback) => {
+            let cardNumberPattern = /^\d{16}$/
+            if (!cardNumberPattern.test(value)) {
+                callback(new Error('Please enter card number'))
+            } else {
+                callback()
+            }
+        }
+        const validateAmount = (rule, value, callback) => {
+            let posPattern = /^[1-9]\d*$/
+            if (!posPattern.test(value)) {
+                callback(new Error('Amount error'))
+            } else {
+                callback()
+            }
+        }
+        const validatePwd = (rule, value, callback) => {
+            let pwdPattern = /^\d{6}$/
+            if (!pwdPattern.test(value)) {
+                callback(new Error('The password only has 6 digits'))
+            } else {
+                callback()
+            }
+        }
 
         return {
             storedUserInfo: storedUserInfo,
@@ -168,6 +202,12 @@ export default {
                 cardPwd: '',
 
             },
+            innerTracRules: {
+                cardId: [{ required: true, trigger: 'blur', validator: validateCard }],
+                tracAmount: [{ required: true, trigger: 'blur', validator: validateAmount }],
+                walletPwd: [{ required: true, trigger: 'blur', validator: validatePwd }],
+                cardPwd: [{ required: true, trigger: 'blur', validator: validatePwd }],
+            },
             addCardInfoForm: {
                 userId: '',
                 cardNumber: '',
@@ -175,14 +215,26 @@ export default {
                 balance: 0,
                 pwd: ''
             },
+            addCardInfoRules: {
+                cardNumber: [{ required: true, trigger: 'blur', validator: validateCardNumber }],
+                cardType: [{ required: true, trigger: 'blur', validator: validateBank }],
+                balance: [{ required: true, trigger: 'blur', validator: validateAmount }],
+                pwd: [{ required: true, trigger: 'blur', validator: validatePwd }],
+            },
             bindCardInfoForm: {
                 userId: '',
-                cardNumber: '',
+                cardId: '',
+            },
+            bindCardInfoRules: {
+                cardId: [{ required: true, trigger: 'blur', validator: validateCard }],
             },
             removeCardInfoForm: {
                 userId: '',
                 cardId: ''
-            }
+            },
+            removeCardInfoRules: {
+                cardId: [{ required: true, trigger: 'blur', validator: validateCard }],
+            },
         }
     },
     mounted() {
@@ -238,38 +290,6 @@ export default {
                 })
             })
         },
-        // 检验充值提现表单的合法性
-        validateInnerTrac() {
-            if (this.innerTracForm.cardId === '') {
-                return false
-            }
-            if (this.innerTracForm.tracAmount <= 0) {
-                return false
-            }
-            if (this.innerTracForm.walletPwd === '') {
-                return false
-            }
-            if (this.innerTracForm.cardPwd === '') {
-                return false
-            }
-            return true
-        },
-
-        validateAddCard() {
-            if (this.addCardInfoForm.cardNumber === '') {
-                return false
-            }
-            if (this.addCardInfoForm.cardType === '') {
-                return false
-            }
-            if (this.balance < 0) {
-                return false
-            }
-            if (this.addCardInfoForm.pwd == '') {
-                return false
-            }
-            return true
-        },
 
         formatDate(dateTimeString) {
             const date = new Date(dateTimeString);
@@ -281,6 +301,10 @@ export default {
         },
         padZero(value) {
             return value < 10 ? `0${value}` : value;
+        },
+
+        formatCardNumber(cardNumber) {
+            return String(cardNumber).replace(/(\d{4})(?=\d)/g, '$1 ')
         },
 
         handleCharge() {
@@ -296,40 +320,38 @@ export default {
         },
 
         handleInnerTracForm() {
-            if (this.validateInnerTrac()) {
-                return new Promise((resolve, reject) => {
-                    const { cardId, tracAmount, tracType, walletPwd, cardPwd } = this.innerTracForm
-                    innerTransaction({ userId: this.storedUserInfo.userId, cardId: cardId, tracAmount: tracAmount, tracType: tracType, walletPwd: walletPwd, cardPwd: cardPwd }).then(response => {
-                        if (response.success) {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    location.reload()
-                                }
-                            })
-                        }
-                        else {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                }
-                            })
-                        }
-                    }).catch(error => {
-                        this.$message({
-                            message: error,
-                            type: 'error'
-                        });
+            this.$refs.innerTracForm.validate((valid) => {
+                if (valid) {
+                    return new Promise((resolve, reject) => {
+                        const { cardId, tracAmount, tracType, walletPwd, cardPwd } = this.innerTracForm
+                        innerTransaction({ userId: this.storedUserInfo.userId, cardId: cardId, tracAmount: tracAmount, tracType: tracType, walletPwd: walletPwd, cardPwd: cardPwd }).then(response => {
+                            if (response.success) {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        location.reload()
+                                    }
+                                })
+                            }
+                            else {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                    }
+                                })
+                            }
+                        }).catch(error => {
+                            this.$message({
+                                message: error,
+                                type: 'error'
+                            });
+                        })
                     })
-                })
-            }
-            else {
-                this.$alert('输入为空或不合理！', '提示', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                    }
-                })
-            }
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            })
         },
 
         handleAddCard() {
@@ -337,42 +359,41 @@ export default {
         },
 
         handleAddCardForm() {
-            if (this.validateAddCard()) {
-                return new Promise((resolve, reject) => {
-                    const { cardNumber, cardType, balance, pwd } = this.addCardInfoForm
-                    addCard({ userId: this.storedUserInfo.userId, cardNumber: cardNumber, cardType: cardType, balance: balance, pwd: pwd }).then(response => {
-                        if (response.success) {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    location.reload()
-                                }
-                            })
-                        }
-                        else {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                }
-                            })
-                        }
-                        resolve(response)
-                    }).catch(error => {
-                        this.$message({
-                            message: error,
-                            type: 'error'
-                        });
-                        reject(error)
+            this.$refs.addCardInfoForm.validate((valid) => {
+                if (valid) {
+                    return new Promise((resolve, reject) => {
+                        const { cardNumber, cardType, balance, pwd } = this.addCardInfoForm
+                        addCard({ userID: this.storedUserInfo.userId, cardNumber: cardNumber, cardType: cardType, balance: balance, pwd: pwd }).then(response => {
+                            if (response.success) {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        location.reload()
+                                    }
+                                })
+                            }
+                            else {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                    }
+                                })
+                            }
+                            resolve(response)
+                        }).catch(error => {
+                            this.$message({
+                                message: error,
+                                type: 'error'
+                            });
+                            reject(error)
+                        })
                     })
-                })
-            }
-            else {
-                this.$alert('输入为空或不合理！', '提示', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                    }
-                })
-            }
+                }
+                else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            })
         },
 
         handleRemoveCard() {
@@ -380,42 +401,41 @@ export default {
         },
 
         handleRemoveCardForm() {
-            if (this.removeCardInfoForm.cardId === '') {
-                this.$alert('输入为空或不合理！', '提示', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                    }
-                })
-            }
-            else {
-                return new Promise((resolve, reject) => {
-                    const cardId = this.removeCardInfoForm.cardId
-                    removeCard({ userId: this.storedUserInfo.userId, cardId: parseInt(cardId) }).then(response => {
-                        if (response.success) {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    location.reload()
-                                }
-                            })
-                        }
-                        else {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                }
-                            })
-                        }
-                        resolve(response)
-                    }).catch(error => {
-                        this.$message({
-                            message: error,
-                            type: 'error'
-                        });
-                        reject(error)
+            this.$refs.removeCardInfoForm.validate((valid) => {
+                if (valid) {
+                    return new Promise((resolve, reject) => {
+                        const cardId = this.removeCardInfoForm.cardId
+                        removeCard({ userId: this.storedUserInfo.userId, cardId: parseInt(cardId) }).then(response => {
+                            if (response.success) {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        location.reload()
+                                    }
+                                })
+                            }
+                            else {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                    }
+                                })
+                            }
+                            resolve(response)
+                        }).catch(error => {
+                            this.$message({
+                                message: error,
+                                type: 'error'
+                            });
+                            reject(error)
+                        })
                     })
-                })
-            }
+                }
+                else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            })
         },
 
         handleBindCard() {
@@ -423,42 +443,41 @@ export default {
         },
 
         handleBindCardForm() {
-            if (this.bindCardInfoForm.cardNumber === '') {
-                this.$alert('输入为空或不合理！', '提示', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                    }
-                })
-            }
-            else {
-                return new Promise((resolve, reject) => {
-                    const cardNumber = this.bindCardInfoForm.cardNumber
-                    bindCard({ userID: this.storedUserInfo.userId, cardNumber: parseInt(cardNumber) }).then(response => {
-                        if (response.success) {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                    location.reload()
-                                }
-                            })
-                        }
-                        else {
-                            this.$alert(response.message, '提示', {
-                                confirmButtonText: '确定',
-                                callback: action => {
-                                }
-                            })
-                        }
-                        resolve(response)
-                    }).catch(error => {
-                        this.$message({
-                            message: error,
-                            type: 'error'
-                        });
-                        reject(error)
+            this.$refs.bindCardInfoForm.validate((valid) => {
+                if (valid) {
+                    return new Promise((resolve, reject) => {
+                        const { cardId } = this.bindCardInfoForm
+                        bindCard(this.storedUserInfo.userId, parseInt(cardId)).then(response => {
+                            if (response.success) {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        location.reload()
+                                    }
+                                })
+                            }
+                            else {
+                                this.$alert(response.message, '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                    }
+                                })
+                            }
+                            resolve(response)
+                        }).catch(error => {
+                            this.$message({
+                                message: error,
+                                type: 'error'
+                            });
+                            reject(error)
+                        })
                     })
-                })
-            }
+                }
+                else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            })
         },
     }
 }

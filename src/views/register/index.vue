@@ -1,33 +1,21 @@
 <template>
   <div class="register-container">
-    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form" auto-complete="on" label-position="left">
+    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form" auto-complete="on"
+      label-position="left">
       <div class="title-container">
         <h3 class="title">用户注册</h3>
       </div>
 
       <div class="item-label">用户名</div>
       <el-form-item prop="username">
-        <el-input
-          ref="username"
-          v-model="registerForm.username"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
+        <el-input ref="username" v-model="registerForm.username" name="username" type="text" tabindex="1"
+          auto-complete="on" />
       </el-form-item>
 
       <div class="item-label">密码</div>
       <el-form-item prop="password">
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="registerForm.password"
-          :type="passwordType"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-        />
+        <el-input :key="passwordType" ref="password" v-model="registerForm.password" :type="passwordType" name="password"
+          tabindex="2" auto-complete="on" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
@@ -35,15 +23,8 @@
 
       <div class="item-label">确认密码</div>
       <el-form-item prop="confirmpassword">
-        <el-input
-          :key="confirmPasswordType"
-          ref="confirmpassword"
-          v-model="registerForm.confirmpassword"
-          :type="confirmPasswordType"
-          name="confirmpassword"
-          tabindex="3"
-          auto-complete="on"
-        />
+        <el-input :key="confirmPasswordType" ref="confirmpassword" v-model="registerForm.confirmpassword"
+          :type="confirmPasswordType" name="confirmpassword" tabindex="3" auto-complete="on" />
         <span class="show-pwd" @click="showConfirmPwd">
           <svg-icon :icon-class="confirmPasswordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
@@ -51,70 +32,35 @@
 
       <div class="item-label">姓名</div>
       <el-form-item prop="name">
-        <el-input
-          ref="name"
-          v-model="registerForm.name"
-          name="name"
-          type="text"
-          tabindex="4"
-          auto-complete="on"
-        />
+        <el-input ref="name" v-model="registerForm.name" name="name" type="text" tabindex="4" auto-complete="on" />
       </el-form-item>
 
       <div class="item-label">SSN</div>
       <el-form-item prop="ssn">
-        <el-input
-          ref="ssn"
-          v-model="registerForm.ssn"
-          name="ssn"
-          type="text"
-          tabindex="5"
-          auto-complete="on"
-        />
+        <el-input ref="ssn" v-model="registerForm.ssn" name="ssn" type="text" tabindex="5" auto-complete="on" />
       </el-form-item>
 
       <div class="item-label">电子邮件</div>
       <el-form-item prop="email">
-        <el-input
-          ref="email"
-          v-model="registerForm.email"
-          name="email"
-          type="text"
-          tabindex="6"
-          auto-complete="on"
-        />
+        <el-input ref="email" v-model="registerForm.email" name="email" type="text" tabindex="6" auto-complete="on" />
       </el-form-item>
 
       <div class="item-label">电话号码</div>
       <el-form-item prop="phone">
-        <el-input
-          ref="phone"
-          v-model="registerForm.phone"
-          name="phone"
-          type="text"
-          tabindex="7"
-          auto-complete="on"
-        />
+        <el-input ref="phone" v-model="registerForm.phone" name="phone" type="text" tabindex="7" auto-complete="on" />
       </el-form-item>
 
       <div class="item-label">支付密码</div>
       <el-form-item prop="payPwd">
-        <el-input
-          ref="payPwd"
-          v-model="registerForm.payPwd"
-          name="payPwd"
-          type="text"
-          tabindex="8"
-          auto-complete="on"
-          :key="payPwdType"
-          :type="payPwdType"
-        />
+        <el-input ref="payPwd" v-model="registerForm.payPwd" name="payPwd" type="text" tabindex="8" auto-complete="on"
+          :key="payPwdType" :type="payPwdType" />
         <span class="show-pwd" @click="showPayPwd">
           <svg-icon :icon-class="payPwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleRegister">注册</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleRegister">注册</el-button>
     </el-form>
   </div>
 </template>
@@ -134,6 +80,13 @@ export default {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('The password can not be less than 6 digits'))
+      } else {
+        callback()
+      }
+    }
+    const validateName = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('Please enter name'))
       } else {
         callback()
       }
@@ -165,7 +118,7 @@ export default {
     const validateConfirmpassword = (rule, value, callback) => {
       if (!value.length) {
         callback(new Error('Confirm password can not be null'))
-      } else if(!this.passwordsMatch){
+      } else if (!this.passwordsMatch) {
         callback(new Error('passwords not match'))
       }
       else {
@@ -186,15 +139,16 @@ export default {
         username: '',
         password: '',
         confirmpassword: '',
-        name:'',
+        name: '',
         ssn: '',
         email: '',
         phone: '',
-        payPwd:''
+        payPwd: ''
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        name: [{ required: true, trigger: 'blur', validator: validateName }],
         ssn: [{ required: true, trigger: 'blur', validator: validateSsn }],
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         phone: [{ required: true, trigger: 'blur', validator: validatePhone }],
@@ -208,14 +162,14 @@ export default {
       redirect: undefined
     }
   },
-  computed:{
-    passwordsMatch(){
+  computed: {
+    passwordsMatch() {
       return this.registerForm.password === this.registerForm.confirmpassword
     }
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -257,7 +211,7 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/register', this.registerForm).then(res => {
-            if(res.success){
+            if (res.success) {
               this.$alert(res.message, '提示', {
                 confirmButtonText: '确定',
                 callback: action => {
@@ -265,13 +219,13 @@ export default {
                 }
               })
             }
-            else{
+            else {
               this.$alert(res.message, '提示', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.loading = false
-              }
-            })
+                confirmButtonText: '确定',
+                callback: action => {
+                  this.loading = false
+                }
+              })
             }
           }).catch(() => {
             console.log('err1')
@@ -291,8 +245,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -332,7 +286,7 @@ $cursor: #fff;
     color: #454545;
   }
 
-  .item-label{
+  .item-label {
     color: #fff;
     margin: 8px 10px;
   }
@@ -340,9 +294,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .register-container {
   min-height: 100%;
